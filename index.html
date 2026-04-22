@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>LMS Portal</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- AUTH SECTION -->
+<div id="authSection">
+  <div class="auth-box">
+    <h1>📚 LMS Portal</h1>
+    <div class="tabs">
+      <button class="tab-btn active" onclick="showTab('login')">Login</button>
+      <button class="tab-btn" onclick="showTab('register')">Register</button>
+    </div>
+
+    <!-- Login -->
+    <div id="loginTab">
+      <input type="text" id="loginUsername" placeholder="Username" />
+      <input type="password" id="loginPassword" placeholder="Password" />
+      <select id="loginRole">
+        <option value="student">Student</option>
+        <option value="admin">Admin</option>
+      </select>
+      <button onclick="login()">Login</button>
+      <p id="loginMsg" class="msg"></p>
+    </div>
+
+    <!-- Register -->
+    <div id="registerTab" style="display:none">
+      <input type="text" id="regName" placeholder="Full Name" />
+      <input type="text" id="regUsername" placeholder="Username" />
+      <input type="password" id="regPassword" placeholder="Password" />
+      <input type="email" id="regEmail" placeholder="Email" />
+      <select id="regRole">
+        <option value="student">Student</option>
+        <option value="admin">Admin</option>
+      </select>
+      <button onclick="register()">Register</button>
+      <p id="registerMsg" class="msg"></p>
+    </div>
+  </div>
+</div>
+
+<!-- DASHBOARD SECTION -->
+<div id="dashboardSection" style="display:none">
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="logo">📚 LMS Portal</div>
+    <div class="user-info">
+      <span id="sidebarUser"></span><br/>
+      <small id="sidebarRole"></small>
+    </div>
+    <nav>
+      <a href="#" onclick="showPage('dashboard')" class="nav-link active">🏠 Dashboard</a>
+      <a href="#" onclick="showPage('courses')" class="nav-link">📖 Courses</a>
+      <a href="#" onclick="showPage('students')" class="nav-link" id="studentsNav">👨‍🎓 Students</a>
+      <a href="#" onclick="showPage('myCourses')" class="nav-link" id="myCoursesNav">📋 My Courses</a>
+      <a href="#" onclick="showPage('grades')" class="nav-link">📊 Grades</a>
+      <a href="#" onclick="showPage('announcements')" class="nav-link">📢 Announcements</a>
+      <a href="#" onclick="logout()" class="nav-link logout">🚪 Logout</a>
+    </nav>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+
+    <!-- Dashboard Page -->
+    <div id="page-dashboard" class="page">
+      <h2>Dashboard</h2>
+      <div class="stats-grid" id="statsGrid"></div>
+      <div class="recent-box">
+        <h3>Recent Announcements</h3>
+        <div id="recentAnnouncements"></div>
+      </div>
+    </div>
+
+    <!-- Courses Page -->
+    <div id="page-courses" class="page" style="display:none">
+      <div class="page-header">
+        <h2>Courses</h2>
+        <button id="addCourseBtn" onclick="openModal('courseModal')" style="display:none">+ Add Course</button>
+      </div>
+      <div class="search-bar">
+        <input type="text" id="courseSearch" placeholder="Search courses..." oninput="renderCourses()" />
+      </div>
+      <div class="card-grid" id="courseList"></div>
+    </div>
+
+    <!-- Students Page (Admin only) -->
+    <div id="page-students" class="page" style="display:none">
+      <h2>Students</h2>
+      <div class="search-bar">
+        <input type="text" id="studentSearch" placeholder="Search students..." oninput="renderStudents()" />
+      </div>
+      <table class="data-table">
+        <thead>
+          <tr><th>Name</th><th>Username</th><th>Email</th><th>Enrolled Courses</th><th>Action</th></tr>
+        </thead>
+        <tbody id="studentTable"></tbody>
+      </table>
+    </div>
+
+    <!-- My Courses Page (Student) -->
+    <div id="page-myCourses" class="page" style="display:none">
+      <h2>My Enrolled Courses</h2>
+      <div class="card-grid" id="myCourseList"></div>
+    </div>
+
+    <!-- Grades Page -->
+    <div id="page-grades" class="page" style="display:none">
+      <div class="page-header">
+        <h2>Grades</h2>
+        <button id="addGradeBtn" onclick="openModal('gradeModal')" style="display:none">+ Add Grade</button>
+      </div>
+      <table class="data-table">
+        <thead>
+          <tr><th>Student</th><th>Course</th><th>Grade</th><th>Marks</th><th id="gradeActionHead"></th></tr>
+        </thead>
+        <tbody id="gradeTable"></tbody>
+      </table>
+    </div>
+
+    <!-- Announcements Page -->
+    <div id="page-announcements" class="page" style="display:none">
+      <div class="page-header">
+        <h2>Announcements</h2>
+        <button id="addAnnouncementBtn" onclick="openModal('announcementModal')" style="display:none">+ Add Announcement</button>
+      </div>
+      <div id="announcementList"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- MODALS -->
+
+<!-- Course Modal -->
+<div id="courseModal" class="modal">
+  <div class="modal-box">
+    <h3>Add New Course</h3>
+    <input type="text" id="courseTitle" placeholder="Course Title" />
+    <input type="text" id="courseInstructor" placeholder="Instructor Name" />
+    <textarea id="courseDesc" placeholder="Course Description"></textarea>
+    <input type="number" id="courseDuration" placeholder="Duration (hours)" />
+    <select id="courseCategory">
+      <option>Programming</option>
+      <option>Design</option>
+      <option>Business</option>
+      <option>Science</option>
+      <option>Mathematics</option>
+      <option>Language</option>
+    </select>
+    <div class="modal-actions">
+      <button onclick="addCourse()">Add Course</button>
+      <button class="cancel" onclick="closeModal('courseModal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Grade Modal -->
+<div id="gradeModal" class="modal">
+  <div class="modal-box">
+    <h3>Add Grade</h3>
+    <select id="gradeStudent"></select>
+    <select id="gradeCourse"></select>
+    <input type="number" id="gradeMarks" placeholder="Marks (0-100)" min="0" max="100" />
+    <div class="modal-actions">
+      <button onclick="addGrade()">Save Grade</button>
+      <button class="cancel" onclick="closeModal('gradeModal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Announcement Modal -->
+<div id="announcementModal" class="modal">
+  <div class="modal-box">
+    <h3>New Announcement</h3>
+    <input type="text" id="annTitle" placeholder="Title" />
+    <textarea id="annContent" placeholder="Announcement content..."></textarea>
+    <div class="modal-actions">
+      <button onclick="addAnnouncement()">Post</button>
+      <button class="cancel" onclick="closeModal('announcementModal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
